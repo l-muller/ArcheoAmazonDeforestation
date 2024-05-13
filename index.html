@@ -1,12 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sitios Arqueológicos em áreas de desmatamento na Amazônia Legal</title>
+<meta charset="utf-8">
+<title>ArqueoAmazon</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+<link rel="stylesheet" href="style.css">
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+.map-overlay {
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    position: absolute;
+    width: 200px;
+    top: 10px; right: 10px;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    overflow-y: auto;
+    max-height: 90%;
+}
+.map-overlay label {
+    display: block;
+    cursor: pointer;
+}
+.map-overlay label input {
+    margin-right: 5px;
+}
+</style>
 </head>
 <body>
-    <!-- Coloque seu código de incorporação do Mapbox aqui -->
-    <iframe width='100%' height='500px' src="https://api.mapbox.com/styles/v1/convidado/clk7s4tsl02tu01p71yt9hnjt.html?title=false&access_token=pk.eyJ1IjoiY29udmlkYWRvIiwiYSI6ImNqZ2wzYWVuMDE2cm8zM284cm4wZ25uc2wifQ.d8Y_NpxazV3JB68v7qmGtg&zoomwheel=false#4.16/-6.23/-56.28" title="Amazônia Legal_Arqueologia" style="border:none;"></iframe>
+<div id="map"></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiY29udmlkYWRvIiwiYSI6ImNqZ2wzYWVuMDE2cm8zM284cm4wZ25uc2wifQ.d8Y_NpxazV3JB68v7qmGtg';
+const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/convidado/clk7s4tsl02tu01p71yt9hnjt',
+    projection: 'globe',
+    zoom: 4.16,
+    center: [-56.28, -6.23]
+});
+
+map.addControl(new mapboxgl.NavigationControl());
+map.scrollZoom.disable();
+
+map.on('load', function () {
+    map.setFog({}); // Set the default atmosphere style
+
+    const layers = [
+        ['teste4444-2tc0zq', 'Teste 4444'],
+        ['Sitios_desmatados_ate_2022-bwgswx', 'Sítios Desmatados até 2022'],
+        ['Sitios_basleis-no-forest-9rakw6', 'Sítios Basleis não Floresta'],
+        ['quilombolas-points', 'Quilombolas'],
+        ['conservation-units-points', 'Unidades de Conservação'],
+        ['indigenous-area-points', 'Áreas Indígenas']
+    ];
+    const layerList = document.createElement('div');
+    layerList.className = 'map-overlay';
+    layers.forEach(function (layer) {
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = true;
+        checkbox.onchange = function (e) {
+            map.setLayoutProperty(layer[0], 'visibility', this.checked ? 'visible' : 'none');
+        };
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(layer[1]));
+        layerList.appendChild(label);
+    });
+    document.body.appendChild(layerList);
+});
+</script>
 </body>
 </html>
